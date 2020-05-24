@@ -6,4 +6,8 @@
 
 ***
 
-![1](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/1.gif)                                                   ![2](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/2.gif)
+
+## Screenshots
+
+<img src='https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/1.gif' align='left' width='25%'>
+<img src='https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/1.gif' align='left' width='25%'>
