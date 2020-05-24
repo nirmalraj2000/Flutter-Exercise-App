@@ -1,0 +1,216 @@
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+import 'package:flutter/services.dart';
+
+import 'HomePage.dart';
+
+class Workout extends StatefulWidget {
+  @override
+  _WorkoutState createState() => _WorkoutState();
+}
+
+class _WorkoutState extends State<Workout> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool continueButtonVisibility;
+  TextEditingController _setsController = TextEditingController();
+
+  Widget _buttonStateWidget;
+
+  List<int> randomList;
+  int random;
+  int max;
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    randomList = generateRandomNumberSet();
+    continueButtonVisibility = false;
+    _buttonStateWidget = emptyContainer();
+  }
+
+  List<int> generateRandomNumberSet() {
+    List<int> randomList = [];
+
+    while (true) {
+      int random = Random().nextInt(13);
+      if (randomList.length != 0 && randomList.contains(random)) {
+        continue;
+      }
+      randomList.add(random);
+      if (randomList.length == 5) break;
+    }
+
+    return randomList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        // appBar: AppBar(
+        //   title: Text("Workout page"),
+        // ),
+        body: Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: Text(
+            "Today's Workout",
+            style: TextStyle(
+              color: Colors.blue,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+            },
+            child: Container(
+              height: 500,
+              child: ListView.builder(
+                  itemCount: randomList.length,
+                  itemBuilder: (context, i) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          height: 100,
+                          width: 100,
+                          child: Image(
+                              image: AssetImage(
+                                  "Images/${randomList[i] + 1}.png")),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 50),
+                          child: Text(
+                            "${i + 1}",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  }),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 30, bottom: 30),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(right: 20),
+                width: 150,
+                height: 50,
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _setsController,
+                    onChanged: (value) {
+                      if (value == null || value == "") {
+                        setState(() {
+                          continueButtonVisibility = false;
+                          _buttonStateWidget = emptyContainer();
+                        });
+                      } else {
+                        setState(() {
+                          continueButtonVisibility = true;
+                          _buttonStateWidget = containerButton(context);
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null)
+                        return "Enter Some Value";
+                      else if (int.parse(value) is int) {
+                        print("null");
+                        return null;
+                      } else
+                        return "Enter a Valid count";
+                    },
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    cursorColor: Colors.blue,
+                    decoration: InputDecoration(
+                      hintText: "Your Sets",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                    ),
+                  ),
+                ),
+              ),
+              // continueButtonVisibility
+              //     ? Container(
+              //         // duration: Duration(seconds: 2),
+              //         width: 130,
+              //         height: 50,
+              //         child: RaisedButton(
+              //           onPressed: () {},
+              //           child: Text(
+              //             "Continue",
+              //             style: TextStyle(
+              //               color: Colors.white,
+              //             ),
+              //           ),
+              //           shape: RoundedRectangleBorder(
+              //               borderRadius: BorderRadius.circular(20)),
+              //           color: Colors.blue,
+              //         ),
+              //       )
+              //     : Container(),
+              AnimatedSwitcher(
+                duration: Duration(milliseconds: 250),
+                child: _buttonStateWidget,
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return ScaleTransition(
+                    scale: animation,
+                    child: child,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    ));
+  }
+
+  Widget containerButton(BuildContext context) => Container(
+        key: ValueKey(1),
+        width: 130,
+        height: 50,
+        child: RaisedButton(
+          onPressed: () {
+            if (_formKey.currentState.validate()) {
+              FocusScope.of(context).requestFocus(FocusNode());
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => HomePage(
+                        exerciseToday: randomList,setsCount: int.parse(_setsController.text),
+                      )));
+
+            }
+          },
+          child: Text(
+            "Continue",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          color: Colors.blue,
+        ),
+      );
+
+  Widget emptyContainer() => Container(
+        key: ValueKey(2),
+      );
+}
