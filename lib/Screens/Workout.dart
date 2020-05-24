@@ -16,6 +16,8 @@ class _WorkoutState extends State<Workout> {
   TextEditingController _setsController = TextEditingController();
 
   Widget _buttonStateWidget;
+  Widget _countDownState;
+  Widget _fieldState;
 
   List<int> randomList;
   int random;
@@ -28,6 +30,8 @@ class _WorkoutState extends State<Workout> {
     randomList = generateRandomNumberSet();
     continueButtonVisibility = false;
     _buttonStateWidget = emptyContainer();
+    _fieldState = textField();
+    _countDownState = emptyContainer();
   }
 
   List<int> generateRandomNumberSet() {
@@ -48,9 +52,6 @@ class _WorkoutState extends State<Workout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: AppBar(
-        //   title: Text("Workout page"),
-        // ),
         body: Column(
       children: <Widget>[
         Padding(
@@ -103,84 +104,131 @@ class _WorkoutState extends State<Workout> {
         ),
         Padding(
           padding: EdgeInsets.only(top: 30, bottom: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(right: 20),
-                width: 150,
-                height: 50,
-                child: Form(
-                  key: _formKey,
-                  child: TextFormField(
-                    controller: _setsController,
-                    onChanged: (value) {
-                      if (value == null || value == "") {
-                        setState(() {
-                          continueButtonVisibility = false;
-                          _buttonStateWidget = emptyContainer();
-                        });
-                      } else {
-                        setState(() {
-                          continueButtonVisibility = true;
-                          _buttonStateWidget = containerButton(context);
-                        });
-                      }
-                    },
-                    validator: (value) {
-                      if (value == null)
-                        return "Enter Some Value";
-                      else if (int.parse(value) is int) {
-                        print("null");
-                        return null;
-                      } else
-                        return "Enter a Valid count";
-                    },
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    cursorColor: Colors.blue,
-                    decoration: InputDecoration(
-                      hintText: "Your Sets",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20)),
+          child: AnimatedSwitcher(
+            duration: Duration(seconds: 1),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(right: 20),
+                  width: 150,
+                  height: 50,
+                  child: Form(
+                    key: _formKey,
+                    child: AnimatedSwitcher(
+                      duration: Duration(seconds: 250),
+                      child: _fieldState,
                     ),
                   ),
                 ),
-              ),
-              // continueButtonVisibility
-              //     ? Container(
-              //         // duration: Duration(seconds: 2),
-              //         width: 130,
-              //         height: 50,
-              //         child: RaisedButton(
-              //           onPressed: () {},
-              //           child: Text(
-              //             "Continue",
-              //             style: TextStyle(
-              //               color: Colors.white,
-              //             ),
-              //           ),
-              //           shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(20)),
-              //           color: Colors.blue,
-              //         ),
-              //       )
-              //     : Container(),
-              AnimatedSwitcher(
-                duration: Duration(milliseconds: 250),
-                child: _buttonStateWidget,
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return ScaleTransition(
-                    scale: animation,
-                    child: child,
-                  );
-                },
-              ),
-            ],
+                AnimatedSwitcher(
+                  duration: Duration(seconds: 1),
+                  child: _countDownState,
+                ),
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 250),
+                  child: _buttonStateWidget,
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return ScaleTransition(
+                      scale: animation,
+                      child: child,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ],
     ));
+  }
+
+  Widget textField() => TextFormField(
+        controller: _setsController,
+        onChanged: (value) {
+          if (value == null || value == "") {
+            setState(() {
+              continueButtonVisibility = false;
+              _buttonStateWidget = emptyContainer();
+            });
+          } else {
+            setState(() {
+              continueButtonVisibility = true;
+              _buttonStateWidget = containerButton(context);
+            });
+          }
+        },
+        validator: (value) {
+          if (value == null)
+            return "Enter Some Value";
+          else if (int.parse(value) is int) {
+            print("null");
+            return null;
+          } else
+            return "Enter a Valid count";
+        },
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        cursorColor: Colors.blue,
+        decoration: InputDecoration(
+          hintText: "Your Sets",
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+        ),
+      );
+
+
+  Widget countDown(String text, int key) => Text(
+        "$text",
+        key: ValueKey(key),
+        style: TextStyle(
+            color: Colors.black, fontSize: 70, fontWeight: FontWeight.bold),
+      );
+
+  void startCountDown() {
+    // Navigating with count down
+
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _countDownState = countDown("3", 2);
+      });
+    });
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        _countDownState = countDown("2", 3);
+      });
+    });
+
+    Future.delayed(Duration(seconds: 3), () {
+      setState(() {
+        _countDownState = countDown("1", 4);
+      });
+    });
+
+    Future.delayed(Duration(seconds: 4), () {
+      setState(() {
+        _countDownState = countDown("Go", 5);
+      });
+    });
+    Future.delayed(Duration(seconds: 5), () {
+      if (_formKey.currentState.validate()) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => HomePage(
+                  exerciseToday: randomList,
+                  setsCount: int.parse(_setsController.text),
+                )));
+      }
+    });
+  }
+
+  void goToHomePage() {
+    if (_formKey.currentState.validate()) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => HomePage(
+                exerciseToday: randomList,
+                setsCount: int.parse(_setsController.text),
+              )));
+    }
   }
 
   Widget containerButton(BuildContext context) => Container(
@@ -189,18 +237,18 @@ class _WorkoutState extends State<Workout> {
         height: 50,
         child: RaisedButton(
           onPressed: () {
-            if (_formKey.currentState.validate()) {
-              FocusScope.of(context).requestFocus(FocusNode());
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => HomePage(
-                        exerciseToday: randomList,setsCount: int.parse(_setsController.text),
-                      )));
+            FocusScope.of(context).requestFocus(FocusNode());
+            setState(() {
+              _buttonStateWidget = emptyContainer();
+            });
 
-            }
+            // startCountDown();
+            goToHomePage();
           },
           child: Text(
-            "Continue",
+            "Go",
             style: TextStyle(
+              fontSize: 20,
               color: Colors.white,
             ),
           ),
@@ -213,4 +261,5 @@ class _WorkoutState extends State<Workout> {
   Widget emptyContainer() => Container(
         key: ValueKey(2),
       );
+
 }
