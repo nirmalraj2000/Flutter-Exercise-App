@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   // Variables
   int _exerciseIndex;
   bool isLowDuration;
-  final int breakDurationSeconds = 5;
+  final int breakDurationSeconds = 5+1;
 
   AssetImage imageState;
 
