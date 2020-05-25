@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterexerciseapp/Screens/ExerciseMode.dart';
 import 'Screens/Workout.dart';
 
 void main() => runApp(MyApp());
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
         cursorColor: Colors.blue,
         textSelectionHandleColor: Colors.blue,
       ),
-      home: Workout(),
+      home: ExerciseMode(),
     );
   }
 }

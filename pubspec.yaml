@@ -1,7 +1,7 @@
 name: flutterexerciseapp
 description: A new Flutter project.
 
-version: 1.0.0
+version: 1.0.1
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -11,12 +11,16 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
-  # gapless_audio_loop:
-  audioplayers:
+  audioplayers: 0.15.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "Images.logo.png"
 
 flutter:
 
@@ -40,5 +44,6 @@ flutter:
    - Images/13.png
    - Images/14.png
    - Images/break.png
+   - Images/createrImage.jpg
    - assets/
 

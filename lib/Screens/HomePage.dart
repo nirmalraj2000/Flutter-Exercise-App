@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -17,25 +18,20 @@ class HomePage extends StatefulWidget {
     25 + 1
   ];
 
+  final List<int> musicIndex;
 
-  HomePage({
-    this.exerciseToday,
-    this.setsCount,
-  });
+  HomePage({this.exerciseToday, this.setsCount, this.musicIndex});
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  // Controllers
-
   bool _finished;
 
-  // Variables
   int _exerciseIndex;
   bool isLowDuration;
-  final int breakDurationSeconds = 5+1;
+  final int breakDurationSeconds = 5 + 1;
 
   AssetImage imageState;
 
@@ -54,7 +50,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitDown,DeviceOrientation.portraitUp]);
     _finished = false;
     _exerciseIndex = 0;
     imageState = AssetImage("Images/${widget.exerciseToday[0] + 1}.png");
@@ -71,31 +67,59 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-    advancedPlayer.stop();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-        },
-        child: Container(
-          height: double.infinity,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(
-                "Images/background.png",
+    return WillPopScope(
+      onWillPop: () {
+        return showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                title: Text(
+                  "Close",
+                ),
+                content: Text("Do you want to exit ?"),
+                actions: <Widget>[
+                  RaisedButton(
+                    color: Colors.purpleAccent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Cancel"),
+                  ),
+                  RaisedButton(
+                    color: Colors.purpleAccent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    onPressed: () {
+                      if (_timer != null) _timer.cancel();
+                      advancedPlayer.stop();
+                      exit(0);
+                    },
+                    child: Text("Quit"),
+                  )
+                ],
+              );
+            });
+      },
+      child: SafeArea(
+              child: Scaffold(
+          body: Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(
+                  "Images/background.png",
+                ),
               ),
             ),
+            child: exercisePage(),
           ),
-          child: exercisePage(),
         ),
       ),
     );
@@ -145,7 +169,9 @@ class _HomePageState extends State<HomePage> {
                   child: Container(
                     height: 50,
                     width: 50,
-                    child: _exerciseIndex == 0 && isBreakTime == false && isStartedWorkout
+                    child: _exerciseIndex == 0 &&
+                            isBreakTime == false &&
+                            isStartedWorkout
                         ? Icon(
                             Icons.play_arrow,
                             color: Colors.purpleAccent,
@@ -328,7 +354,8 @@ class _HomePageState extends State<HomePage> {
             Container(
               height: 300,
               width: 300,
-              child: Image(image: imageState,
+              child: Image(
+                image: imageState,
               ),
             ),
             SizedBox(
@@ -363,7 +390,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 50, left: 200, right: 40),
+              padding: const EdgeInsets.only(top: 30, left: 200, right: 40,bottom: 20),
               child: Container(
                 child: RaisedButton(
                   padding: EdgeInsets.all(10),
@@ -385,7 +412,6 @@ class _HomePageState extends State<HomePage> {
                       isStartedWorkout = false;
                       setState(() {
                         isStartButtonClicked = !isStartButtonClicked;
-
                       });
                       advancedPlayer.stop();
                     } else {
@@ -449,36 +475,12 @@ class _HomePageState extends State<HomePage> {
 
     // Single Timer for all the cycles
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    if(!isBreakTime){
-      audioCache.play("song${index.toString()}.mp3");
-
+    if (!isBreakTime && index != 6) {
+      audioCache.play("song${widget.musicIndex[index - 1].toString()}.mp3");
     }
     _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) async {
       if (duration < 1 || index == 6) {
-        if(!isBreakTime)advancedPlayer.stop();
+        if (!isBreakTime) advancedPlayer.stop();
         timer.cancel();
         if (((index == 5 || index == 6) &&
             counter == widget.setsCount - 1 &&
@@ -518,32 +520,7 @@ class _HomePageState extends State<HomePage> {
             isStartButtonClicked = !isStartButtonClicked;
           }
         }
-      } 
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      else {
+      } else {
         duration = duration - 1;
         if (duration <= 10)
           isLowDuration = true;
