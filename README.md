@@ -11,26 +11,24 @@
 
 ## Initial Release
 
-<!-- <img src='https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/1.gif' align='left' width='50%'> -->
-![](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/1.gif=20x100)
-![](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/2.gif=20x100)
-
-<!-- <img src='https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/2.gif' align='left' width='50%'> -->
-
+![1](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/1.gif=20x100) 
+![2](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/2.gif=20x100)
 
 ## New Features Added
-
-<!-- <img src='https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/3.gif' align='left' width='50%' = 200x800> -->
-![](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/3.gif=20x100)
-![](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/3.gif=20x100)
-
-<!-- <img src='https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/4.gif' align='left' width='50%'> -->
 
 Added Random mode and Daywise mode
 
 
 - Now user can select between random choices
 - Daywise mode uses fixed set of exercise for all 7 days
+
+
+
+
+
+
+![3](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/3.gif=20x100)
+![4](https://github.com/nirmalraj2000/Flutter-Exercise-App/blob/master/Images/GIF/3.gif=20x100)
 
 
 
